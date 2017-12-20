@@ -3,7 +3,7 @@ module.exports = {
         //Build variables
         var NUM_HARVESTERS = 4;
         var HARVESTER_BUILD = [WORK, CARRY, MOVE];
-
+        var zero = 0;
         var NUM_BUILDERS = 2;
         var BUILDER_BUILD = [WORK, CARRY, MOVE];
 
