@@ -1,21 +1,24 @@
 var roleBuilder = {
     run: function(creep) {
-
-	    if(creep.memory.building && creep.carry.energy == 0) {
-            creep.memory.building = false;
+      //Determine if the Builder needs to harvest or build
+	    if(creep.memory.isBuilding && creep.carry.energy == 0) {
+            creep.memory.isBuilding = false;
             creep.say('🔄 harvest');
 	    }
-	    if(!creep.memory.building && creep.carry.energy == creep.carryCapacity) {
-	        creep.memory.building = true;
+	    if(!creep.memory.isBuilding && creep.carry.energy == creep.carryCapacity) {
+	        creep.memory.isBuilding = true;
 	        creep.say('🚧 build');
 	    }
-
-	    if(creep.memory.building) {
+      //Find the next site to build or harvest site
+	    if(creep.memory.isBuilding) {
 	        var targets = creep.room.find(FIND_CONSTRUCTION_SITES);
             if(targets.length) {
                 if(creep.build(targets[0]) == ERR_NOT_IN_RANGE) {
                     creep.moveTo(targets[0], {visualizePathStyle: {stroke: '#ffffff'}});
                 }
+            }else {
+              //If there is nothing left to build, go back to being a harvester
+              creep.memory.role = 'harvester';
             }
 	    }
 	    else {
@@ -24,6 +27,7 @@ var roleBuilder = {
                 creep.moveTo(sources[0], {visualizePathStyle: {stroke: '#ffaa00'}});
             }
 	    }
+
 	}
 };
 

@@ -1,5 +1,6 @@
 var roleHarvester = {
     run: function(creep) {
+
 	    if(creep.carry.energy < creep.carryCapacity) {
             var sources = creep.room.find(FIND_SOURCES);
             if(creep.harvest(sources[0]) == ERR_NOT_IN_RANGE) {
@@ -7,6 +8,12 @@ var roleHarvester = {
             }
         }
         else {
+            //If there are construction sites then start building
+            var buildTargets = creep.room.find(FIND_CONSTRUCTION_SITES);
+            if(buildTargets.length){
+              creep.memory.role = 'builder';
+            }
+            //Do standard Harvester Role
             var targets = creep.room.find(FIND_STRUCTURES, {
                     filter: (structure) => {
                         return (structure.structureType == STRUCTURE_EXTENSION ||
@@ -20,6 +27,7 @@ var roleHarvester = {
                 }
             }
         }
+
 	}
 };
 
