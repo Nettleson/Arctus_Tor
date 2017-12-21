@@ -1,21 +1,26 @@
 module.exports = {
     checkNeedCreeps: function() {
         //Colony Constants - Harvesters and Builders have equal builds
-        var NUM_HARVESTERS = 2;
-        var HARVESTER_BUILD = [WORK, CARRY, MOVE];
-        var NUM_BUILDERS = 0;
-        var BUILDER_BUILD = [WORK, CARRY, MOVE];
+        let FIRST_SPAWN = Game.spawns['Spawn1'];
+        let TOTAL_HARVESTERS_PER_SOURCE = 2;
+        let TOTAL_SOURCES = FIRST_SPAWN.room.find(FIND_SOURCES).length;
 
-        var FIRST_SPAWN = Game.spawns['Spawn1'];
-        var minEnergyNeed = 200;
+        //Unit Build Numbers
+        let TOTAL_HARVESTERS = TOTAL_HARVESTERS_PER_SOURCE * TOTAL_SOURCES;
+
+        //Unit Builds
+        let HARVESTER_BUILD = [WORK, CARRY, MOVE];
+        let BUILDER_BUILD = [WORK, CARRY, MOVE];
+
+        let minEnergyNeed = 200;
 
         // If the Spawn1 is currently spawning something, print it out
-        if(Game.spawns['Spawn1'].spawning) {
-            var spawningCreep = Game.creeps[Game.spawns['Spawn1'].spawning.name];
-            Game.spawns['Spawn1'].room.visual.text(
+        if(FIRST_SPAWN.spawning) {
+            var spawningCreep = Game.creeps[FIRST_SPAWN.spawning.name];
+            FIRST_SPAWN.room.visual.text(
                 '🛠️' + spawningCreep.memory.role,
-                Game.spawns['Spawn1'].pos.x + 1,
-                Game.spawns['Spawn1'].pos.y,
+                FIRST_SPAWN.pos.x + 1,
+                FIRST_SPAWN.pos.y,
                 {align: 'left', opacity: 0.8});
         }else {
             //Check if there are sufficient resources to build something
@@ -25,11 +30,11 @@ module.exports = {
             //Check the number of harvesters available
             var harvesters = _.filter(Game.creeps, (creep) => creep.memory.role == 'harvester');
             var builders = _.filter(Game.creeps, (creep) => creep.memory.role == 'builder');
-            if((harvesters.length + builders.length) < NUM_HARVESTERS) {
+            if((harvesters.length + builders.length) < TOTAL_HARVESTERS) {
                 var newName = 'Harvester' + Game.time;
                 console.log('Spawning new harvester: ' + newName);
-                Game.spawns['Spawn1'].spawnCreep([WORK,CARRY,MOVE], newName,
-                    {memory: {role: 'harvester', number: harvesters.length + 1}});
+                FIRST_SPAWN.spawnCreep([WORK,CARRY,MOVE], newName,
+                    {memory: {role: 'harvester', number: harvesters.length + 1, source: (TOTAL_SOURCES % (harvesters.length + 1)) }});
             }
             /*
             //Check the number of builders available
